@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile & Settings - GroceryHub</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f3e8ff;
+      color: #263348;
+    }
+    .main-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: #ede6fa;
+      min-width: 220px;
+      padding: 36px 0 0 0;
+      box-shadow: 2px 0 12px rgba(135,101,255,0.07);
+      display: flex; flex-direction: column;
+    }
+    .sidebar h2 {
+      color: #6c47ff;
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 32px;
+      letter-spacing: 1px;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 16px;
+    }
+    .sidebar nav a {
+      color: #5731ac;
+      background: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      margin-right:12px;
+      transition: background 0.21s, color 0.21s;
+    }
+    .sidebar nav a.active, .sidebar nav a:hover {
+      background: #d3c6f6;
+      color: #222;
+    }
+    .dashboard-content {
+      flex: 1;
+      padding: 36px 44px 24px 44px;
+      min-height: 100vh;
+      background: none;
+    }
+    .profile-section {
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 2px 24px rgba(117,87,250,0.09);
+      padding:32px 46px 30px 46px;
+      max-width:740px;
+      margin:0 auto;
+    }
+    .profile-header {
+      display:flex; flex-direction:column; align-items:center; margin-bottom:22px;
+      gap:16px;
+    }
+    .animation-pic {
+      width:104px;
+      height:104px;
+      border-radius:50%;
+      object-fit:cover;
+      box-shadow:0 4px 32px #d0caee;
+      margin-bottom:6px;
+      background:#faf7ff;
+      opacity: 0;
+      animation: fadeInPic 1.2s cubic-bezier(.7,.2,.3,1.05) forwards;
+    }
+    @keyframes fadeInPic {
+      from {opacity:0; transform:scale(0.7);}
+      to {opacity:1; transform:scale(1);}
+    }
+    .profile-name { font-weight:700;font-size:1.34rem;color:#5938a7; }
+    .profile-basic, .profile-prefs {
+      margin:24px 0;
+      border-bottom:1.5px solid #eae3fc;
+      padding-bottom:20px;
+    }
+    .profile-basic label {font-weight:600;color:#6c47ff;}
+    .profile-basic input {
+      background:#f6f2fe; border: none; border-radius:7px; padding:10px 14px;
+      font-size:1rem; margin:5px 0 10px 0; color:#394070; width:82%;
+    }
+    .profile-basic input[readonly] {
+      background: #f6f2fe;
+      color: #8576d8;
+    }
+    .profile-row {display:flex;gap:25px;}
+    .profile-col {flex:1;}
+    .profile-prefs label { color:#5432d3;font-weight:600;}
+    .profile-prefs input[type="checkbox"]{margin-right:8px;}
+    .alert-type-list{margin-top:10px;}
+    .alert-type-list label{display:block;margin-bottom:6px;}
+    .footer {
+      text-align:center;
+      color:#b7bbcd;
+      font-size:.96rem;
+      margin-top:26px;
+    }
+    @media (max-width:900px) {
+      .dashboard-content { padding:8px 4vw;}
+      .profile-section {padding:14px 7vw;}
+      .profile-header{flex-direction:column;align-items:center;}
+      .animation-pic{ width:64px;height:64px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-layout">
+    <aside class="sidebar">
+      <h2>GroceryHub</h2>
+      <nav>
+        
+        <a href="scan.html">Scan/Add item</a>
+        <a href="expiry.html">Expiry Alert</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="shelf.html">Shelf Finder</a>
+        <a href="report.html">Reports & Analytics</a>
+        <a class="active" href="profile.html">Profile & Settings</a>
+      </nav>
+    </aside>
+    <section class="dashboard-content">
+      <h1 style="font-size:1.24rem;color:#28344e;margin-bottom:18px;font-weight:700;">Profile & Settings</h1>
+      <div class="profile-section" id="profileSection">
+        <div class="profile-header">
+          <!-- Animated Pic/Illustration -->
+          <img class="animation-pic" src="https://static.vecteezy.com/system/resources/previews/025/869/636/non_2x/round-profile-image-of-woman-avatar-for-social-networks-fashion-beauty-blue-and-black-bright-illustration-in-trendy-style-free-vector.jpg" alt="Animated SmartStore" />
+          <div class="profile-name" id="profileName">Jane Doe</div>
+        </div>
+        <form id="profileForm">
+          <div class="profile-basic">
+            <h3 style="color:#263348;font-size:1.13rem;">Personal Information</h3>
+            <div class="profile-row">
+              <div class="profile-col">
+                <label>Employee ID</label><br>
+                <input type="text" id="employeeId" readonly>
+                <label>Name</label><br>
+                <input type="text" id="name" readonly>
+              </div>
+              <div class="profile-col">
+                <label>Email Address</label><br>
+                <input type="email" id="emailAddress" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="profile-prefs">
+            <h3 style="color:#263348;">Notification Preferences</h3>
+            <label><input type="checkbox" id="notifTransact" disabled> Receive transactional notifications</label>
+            <label><input type="checkbox" id="notifMarketing" disabled> Receive marketing notifications</label>
+            <div class="alert-type-list">
+              <label><input type="checkbox" id="alertExpiry" disabled> Critical Expiry Alerts</label>
+              <label><input type="checkbox" id="alertNewItem" disabled> New Item Added Notifications</label>
+              <label><input type="checkbox" id="alertLowStock" disabled> Low Stock Warnings</label>
+            </div>
+            <label>Preferred Notification Channel</label><br>
+            <input type="text" id="notifChannel" value="Email" readonly>
+          </div>
+        </form>
+      </div>
+      <div class="footer"><strong>GroceryHub</strong></div>
+    </section>
+  </div>
+  <script>
+    async function fetchProfileData() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("You must log in first."); window.location.href = "index2.html"; return;
+      }
+      try {
+        const res = await fetch("http://127.0.0.1:3000/api/user/loggeduser", {
+          method: "GET",
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.user) {
+          document.getElementById("profileName").textContent = data.user.name || "";
+          document.getElementById("name").value = data.user.name || "";
+          document.getElementById("emailAddress").value = data.user.email || "";
+          document.getElementById("employeeId").value = data.user._id || "";
+        }
+      } catch(e) {
+        alert("Could not load user profile. Please log in again."); window.location.href = "index2.html";
+      }
+    }
+    window.onload = fetchProfileData;
+  </script>
+</body>
+</html>

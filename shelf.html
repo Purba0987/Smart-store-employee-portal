@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shelf Finder - SmartStore</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f3e8ff;
+      color: #213052;
+    }
+    .main-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: #ede6fa;
+      min-width: 220px;
+      padding: 36px 0 0 0;
+      box-shadow: 2px 0 12px rgba(135,101,255,0.07);
+      display: flex; flex-direction: column;
+    }
+    .sidebar h2 {
+      color: #6c47ff;
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 34px;
+      letter-spacing: 1px;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 16px;
+    }
+    .sidebar nav a {
+      color: #5731ac;
+      background: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: background 0.21s, color 0.21s;
+      margin-right:12px;
+    }
+    .sidebar nav a.active, .sidebar nav a:hover {
+      background: #d3c6f6;
+      color: #222;
+    }
+    .shelf-content {
+      flex: 1;
+      padding: 36px 44px 34px 44px;
+      min-height: 100vh;
+    }
+    .shelf-header {
+      font-size: 1.3rem;
+      color: #28344e;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .filter-row {
+      display: flex;
+      gap: 18px;
+      align-items: flex-end;
+      margin-bottom: 21px;
+      flex-wrap: wrap;
+    }
+    .filter-block {
+      background: #f7f4fe;
+      padding: 12px 20px;
+      border-radius: 9px;
+      box-shadow: 0 2px 10px rgba(117,87,250,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .filter-block label {
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: #7454d3;
+      margin-bottom: 2px;
+    }
+    .filter-block input, .filter-block select {
+      border: 1px solid #cdc2f4;
+      background: #fff;
+      border-radius: 5px;
+      padding: 7px 12px;
+      font-size: 0.98rem;
+      color: #28344e;
+      margin-bottom: 0;
+    }
+    .filter-block select { min-width: 120px;}
+    .search-btn {
+      padding: 10px 22px;
+      background: #6748e6;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-left:6px;
+      box-shadow: 0 4px 14px rgba(117,87,250,0.10);
+    }
+    .search-btn:hover { background: #5432d3; }
+    .section-title { color:#6248b7; font-weight:700; margin-top:22px; margin-bottom:8px;}
+    /* Results & Store Map */
+    .results-map-row{
+      display: flex;
+      gap: 32px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .results-list {
+      min-width: 305px;
+      max-width: 360px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 14px rgba(117,87,250,0.07);
+      padding: 18px 20px 20px 20px;
+      flex:1 0 305px;
+      display:flex;flex-direction:column;gap:13px;
+    }
+    .exp-item {
+      background: #f7f6fa;
+      border-radius: 7px;
+      padding: 12px 14px;
+      margin-bottom: 5px;
+      box-shadow: 0 1px 8px rgba(144,142,220,0.07);
+      display:flex;flex-direction:column;gap:5px;
+      transition:box-shadow 0.18s,background 0.13s;
+      cursor:pointer;
+      border:2px solid transparent;
+    }
+    .exp-item.selected {
+      border-color: #6748e6;
+      background:#efecff;
+      box-shadow: 0 4px 14px rgba(117,87,250,0.10);
+    }
+    .exp-item-upper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+    .exp-item-name {
+      font-weight: 700;
+      color: #253084;
+    }
+    .exp-item-category {
+      background: #e4f1da;
+      color: #34974d;
+      padding: 2px 10px;
+      border-radius: 11px;
+      font-size: 13px;
+      margin-right:5px;
+    }
+    .exp-item-category.dairy { background: #eae8fa; color:#6c47ff;}
+    .exp-item-category.bakery { background: #f9f5ef; color:#b8955d;}
+    .exp-item-category.meat { background: #ffeaea; color:#c94f4f;}
+    .exp-item-category.beverages { background: #daf7fa; color:#249ab2;}
+    .exp-item-category.cooking { background:#e7effd; color:#4075c5;}
+    .exp-item-location {
+      font-size: 0.98rem;
+      color: #7454d3;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    .exp-item-expiry {
+      color: #ea6537;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .storemap-block {
+      flex: 2 1 400px;
+      background: #fff;
+      border-radius: 13px;
+      box-shadow: 0 2px 18px rgba(117,87,250,0.09);
+      padding: 19px 16px 12px 16px;
+      display:flex;flex-direction:column;align-items:center;
+      min-width: 340px;
+      position:relative;
+      overflow:auto;
+    }
+    .storemap-title { color:#6748e6;font-weight:700;margin-bottom:7px;font-size:1.07rem;}
+    .storemap-img {
+      width:98%; max-width:460px; border-radius:11px; margin-top:6px; box-shadow:0 2px 14px rgba(83,50,200,0.08);
+      border:4px solid #ece6fa;
+      position:relative;
+      display:block;
+    }
+    /* Simulated point highlight (e.g., expiry location) */
+    .map-dot {
+      position:absolute;
+      width:18px;height:18px;
+      background:#ea6537;
+      border-radius:50%;
+      border:3px solid #fff;
+      left:68%; top:38%;
+      box-shadow:0 0 8px #ed9675,0 0 1px #ea6537;
+      z-index:2;
+      animation: pulseDot 1.2s infinite;
+    }
+    @keyframes pulseDot{
+      0%{box-shadow:0 0 12px #ffcfc0,0 0 1px #ea6537;}
+      80%{box-shadow:0 0 20px #ed9675,0 0 2px #ea6537;}
+      100%{box-shadow:0 0 13px #ffcfc0,0 0 1px #ea6537;}
+    }
+    @media (max-width:1100px) {
+      .main-layout { flex-direction:column; align-items:stretch;}
+      .shelf-content { padding:16px 4vw 12px 4vw;}
+      .results-map-row{flex-direction:column;}
+      .storemap-block{min-width:200px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>GroceryHub</h2>
+      <nav>
+        
+        <a href="scan.html">Scan/Add item</a>
+        <a href="expiry.html">Expiry Alert</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a class="active" href="shelf.html">Shelf Finder</a>
+        <a href="report.html">Reports & Analytics</a>
+        <a href="profile.html">Profile & Settings</a>
+      </nav>
+    </aside>
+    <!-- Shelf Finder Content -->
+    <section class="shelf-content">
+      <div class="shelf-header">Shelf Finder & Item Locator</div>
+      <!-- Filters -->
+      <form class="filter-row" onsubmit="return false;">
+        <div class="filter-block">
+          <label for="searchTerm">Product or Barcode</label>
+          <input id="searchTerm" type="text" placeholder="e.g. Milk, APL001">
+        </div>
+        <div class="filter-block">
+          <label for="filterCategory">Category</label>
+          <select id="filterCategory">
+            <option value="">All</option>
+            <option value="produce">Produce</option>
+            <option value="dairy">Dairy</option>
+            <option value="bakery">Bakery</option>
+            <option value="meat">Meat</option>
+            <option value="beverages">Beverages</option>
+            <option value="cooking">Cooking</option>
+          </select>
+        </div>
+        <div class="filter-block">
+          <label for="filterAisle">Aisle</label>
+          <select id="filterAisle">
+            <option value="">All</option>
+            <option value="1">Aisle 1</option>
+            <option value="2">Aisle 2</option>
+            <option value="3">Aisle 3</option>
+            <option value="4">Aisle 4</option>
+            <option value="5">Aisle 5</option>
+            <option value="6">Aisle 6</option>
+            <option value="7">Aisle 7</option>
+            <option value="8">Aisle 8</option>
+          </select>
+        </div>
+        <button class="search-btn" onclick="highlightItem();">Find Item</button>
+      </form>
+      <div class="section-title">Expiring Products to Locate</div>
+      <!-- Results & Store Map -->
+      <div class="results-map-row">
+        <!-- Results List -->
+        <div class="results-list" id="results-list">
+          <div class="exp-item selected" onclick="highlightDot(0);">
+            <div class="exp-item-upper">
+              <span class="exp-item-name">Premium Olive Oil</span>
+              <span class="exp-item-category cooking">Cooking</span>
+            </div>
+            <span class="exp-item-location">Aisle 4, Shelf Upper</span>
+            <span class="exp-item-expiry">Expiry: 2025-10-07</span>
+          </div>
+          <div class="exp-item" onclick="highlightDot(1);">
+            <div class="exp-item-upper">
+              <span class="exp-item-name">Whole Wheat Bread</span>
+              <span class="exp-item-category bakery">Bakery</span>
+            </div>
+            <span class="exp-item-location">Aisle 2, Shelf Mid</span>
+            <span class="exp-item-expiry">Expiry: 2024-07-15</span>
+          </div>
+          <div class="exp-item" onclick="highlightDot(2);">
+            <div class="exp-item-upper">
+              <span class="exp-item-name">Cheddar Cheese Block</span>
+              <span class="exp-item-category dairy">Dairy</span>
+            </div>
+            <span class="exp-item-location">Aisle 4, Shelf Upper</span>
+            <span class="exp-item-expiry">Expiry: 2024-08-01</span>
+          </div>
+          <div class="exp-item" onclick="highlightDot(3);">
+            <div class="exp-item-upper">
+              <span class="exp-item-name">Ground Beef 1lb</span>
+              <span class="exp-item-category meat">Meat</span>
+            </div>
+            <span class="exp-item-location">Aisle 7, Shelf Mid</span>
+            <span class="exp-item-expiry">Expiry: 2024-07-12</span>
+          </div>
+        </div>
+        <!-- Store Map: Simulated, with dot for selected product -->
+        <div class="storemap-block" style="position:relative;">
+          <div class="storemap-title">Store Map (Item Location Highlighted)</div>
+          <img src="https://www.pngmart.com/files/22/Supermarket-PNG-File.png"
+               alt="Store Map" class="storemap-img">
+          <div class="map-dot" id="map-dot"
+               style="left:68%; top:38%;"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    // Simulated map dots for items (percent positions for demo only)
+    const mapDots = [
+      { left: "68%", top: "38%" }, // Premium Olive Oil
+      { left: "30%", top: "58%" }, // Whole Wheat Bread
+      { left: "50%", top: "38%" }, // Cheddar Cheese Block
+      { left: "80%", top: "60%" }  // Ground Beef 1lb
+    ];
+    function highlightDot(index) {
+      // Highlight list
+      document.querySelectorAll('.exp-item').forEach((el,idx)=>el.classList.toggle('selected',idx===index));
+      // Move map dot
+      const dot = document.getElementById('map-dot');
+      dot.style.left = mapDots[index].left;
+      dot.style.top = mapDots[index].top;
+    }
+    function highlightItem(){
+      highlightDot(0); // for demo: always select the first item
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Dashboard - GroceryHub</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f3e8ff;
+      color: #263348;
+    }
+    .main-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: #ede6fa;
+      min-width: 220px;
+      padding: 36px 0 0 0;
+      box-shadow: 2px 0 12px rgba(135,101,255,0.07);
+      display: flex; flex-direction: column;
+    }
+    .sidebar h2 {
+      color: #6c47ff;
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 34px;
+      letter-spacing: 1px;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 16px;
+    }
+    .sidebar nav a {
+      color: #5731ac;
+      background: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: background 0.21s, color 0.21s;
+      margin-right:12px;
+    }
+    .sidebar nav a.active, .sidebar nav a:hover {
+      background: #d3c6f6;
+      color: #222;
+    }
+    .dashboard-content {
+      flex: 1;
+      padding: 36px 44px 24px 44px;
+      min-height: 100vh;
+      background: none;
+    }
+    @media (max-width:1000px){
+      .dashboard-content{padding:16px 5vw;}
+      .sidebar{min-width: 160px;}
+    }
+    /* Dashboard Cards & Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.3fr;
+      gap: 38px;
+      margin-bottom: 25px;
+    }
+    .left-panel, .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .kpi-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom:16px;
+    }
+    .kpi-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px 22px;
+      box-shadow: 0 2px 18px rgba(117,87,250,0.08);
+      text-align: left;
+      min-width:100px;
+    }
+    .kpi-label { color: #9298b1; font-size:0.93rem; margin-bottom:4px;}
+    .kpi-value { font-size: 1.5rem; font-weight: 700; color: #6748e6;}
+    .kpi-desc { font-size:13px;color:#20b39e;margin-left:5px;}
+    .kpi-card.critical .kpi-value { color: #f83d6a;}
+    /* Employee of the Month */
+    .employee-card {
+      background: #fffbea;
+      border-radius: 11px;
+      text-align: center;
+      padding: 15px 8px 12px 8px;
+      box-shadow: 0 2px 18px rgba(255,218,81,.09);
+      border: 1.5px solid #ffe066;
+      margin-bottom: 14px;
+    }
+    .employee-label { color:#a8880d;font-weight:700;font-size:1.02rem; }
+    .employee-name { color:#263348;font-size:1.01rem;font-weight:700; }
+    .employee-desc { color:#888c8e;font-size:.95rem;margin-top:2px;font-style:italic;}
+    /* Actionable Insights */
+    .actions-row {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .action-card {
+      background:#fff;
+      border-radius:10px;
+      box-shadow: 0 1px 7px rgba(117,87,250,0.07);
+      padding: 13px 19px;
+      cursor:pointer;
+      transition:box-shadow .13s,transform .12s;
+      display:flex;align-items:center;gap:12px;
+    }
+    .action-card:hover { box-shadow: 0 4px 14px rgba(117,87,250,0.15); transform:scale(1.01);}
+    .action-icon { color:#6783e6;font-size:1.2rem;}
+    .action-title { font-weight:700;color:#263348;font-size:.97rem;}
+    .action-desc { color:#676eab;font-size:.92rem;margin-top:3px;}
+    /* Activities & Charts */
+    .activity-card, .chart-card {
+      background:#fff;
+      border-radius:10px;
+      box-shadow:0 2px 8px rgba(45,78,178,0.08);
+      padding:14px 18px 14px 18px;
+      margin-bottom:12px;
+    }
+    .activity-title { color:#263348; font-weight:700; font-size:1rem; margin-bottom:7px;}
+    .activity-list { list-style:none; padding:0; margin:0;}
+    .activity-list li {
+      color:#5977db; font-size:.96rem; padding: 7px 0; border-bottom:1px solid #efefef;
+      display:flex;justify-content:space-between;align-items:center;
+      transition:background .13s;
+    }
+    .activity-list li span.time {color:#b2b9be;font-size:.91rem;}
+    .activity-list li:last-child {border-bottom:none;}
+    .chart-title { color:#263348; font-weight:700; font-size:.98rem; margin-bottom:10px;}
+    .chart-placeholder {
+      width:97%;min-height:125px;background:
+      linear-gradient(90deg,#ece8fe 25%,#e7f6fa 100%);
+      border-radius:8px;display:flex;align-items:center;justify-content:center;color:#b5b3e6;font-size:1.12rem;
+    }
+    .category-bar {
+      display:flex;align-items:flex-end;gap:11px;height:70px;width:100%;margin-top:2px;
+    }
+    .bar {flex:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;}
+    .bar-label {font-size:.91rem;color:#9baab4;margin-top:3px;}
+    .bar-value {font-size:.97rem;font-weight:600;margin-bottom:1.5px;}
+    .bar.produce{background:#e4f1da;height:48px;}
+    .bar.dairy{background:#eae8fa;height:33px;}
+    .bar.bakery{background:#f9f5ef;height:24px;}
+    .bar.meat{background:#ffeaea;height:18px;}
+    .bar.pantry{background:#f0f0f0;height:9px;}
+    @media (max-width:900px){
+      .dashboard-grid{grid-template-columns:1fr;gap:16px;}
+      .actions-row{grid-template-columns:1fr;}
+      .dashboard-content{padding:8px 4vw;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>GroceryHub</h2>
+      <nav>
+       
+        <a href="scan.html">Scan/Add item</a>
+        <a href="expiry.html">Expiry Alert</a>
+        <a class="active" href="dashboard.html">Dashboard</a>
+        <a href="shelf.html">Shelf Finder</a>
+        <a href="report.html">Reports & Analytics</a>
+        <a href="profile.html">Profile & Settings</a>
+      </nav>
+    </aside>
+    <!-- Dashboard Content -->
+    <section class="dashboard-content">
+      <h1 style="font-size:1.24rem;color:#28344e;margin-bottom:18px;font-weight:700;">Employee Dashboard</h1>
+      <div class="dashboard-grid">
+        <!-- Left Panel -->
+        <div class="left-panel">
+          <div class="kpi-cards">
+            <div class="kpi-card">
+              <div class="kpi-label">Total Items in Stock</div>
+              <div class="kpi-value">12,345</div>
+              <div class="kpi-desc">+5% vs last month</div>
+            </div>
+            <div class="kpi-card critical">
+              <div class="kpi-label">Expiring Soon (7 Days)</div>
+              <div class="kpi-value">87</div>
+              <div class="kpi-desc">-2 items vs last week</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Today's Sales</div>
+              <div class="kpi-value">$4,567.89</div>
+              <div class="kpi-desc">+8% vs yesterday</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">New Items Added (24 Hrs)</div>
+              <div class="kpi-value">34</div>
+              <div class="kpi-desc">+3 items vs yesterday</div>
+            </div>
+          </div>
+          
+
+          
+          <div class="actions-row">
+            <div class="action-card">
+              <span class="action-icon">🔍</span>
+              <div>
+                <div class="action-title">Scan/Add New Item</div>
+                <div class="action-desc">Quickly add new products or update inventory</div>
+              </div>
+            </div>
+            <div class="action-card">
+              <span class="action-icon">⏰</span>
+              <div>
+                <div class="action-title">View Expiry Alerts</div>
+                <div class="action-desc">Check items nearing expiration and manage disposals</div>
+              </div>
+            </div>
+            <div class="action-card">
+              <span class="action-icon">🗺</span>
+              <div>
+                <div class="action-title">Find Item on Shelf</div>
+                <div class="action-desc">Locate products using the store map</div>
+              </div>
+            </div>
+            <div class="action-card">
+              <span class="action-icon">📄</span>
+              <div>
+                <div class="action-title">Generate Reports</div>
+                <div class="action-desc">Access sales, inventory, performance reports</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Right Panel -->
+        <div class="right-panel">
+          <div class="activity-card">
+            <div class="activity-title">Recent Activities</div>
+            <ul class="activity-list">
+              <li>Item 'Organic Milk' added by John Doe <span class="time">5 min ago</span></li>
+              <li>Expiry alert cleared for Fresh Bread <span class="time">30 min ago</span></li>
+              <li>Price updated for 'Breakfast Cereal' <span class="time">1 hour ago</span></li>
+              <li>Shelf location confirmed for 'Olive Oil' <span class="time">2 hours ago</span></li>
+              <li>New shipment received: Produce (150 units) <span class="time">Yesterday</span></li>
+              <li>Inventory count completed for Dairy section <span class="time">Yesterday</span></li>
+              <li>Shift changed for Sarah Chen to Evening <span class="time">2 days ago</span></li>
+              <li>New product 'Vegan Cheese' registered <span class="time">3 days ago</span></li>
+            </ul>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Daily Sales Trend</div>
+            <div class="chart-placeholder">[Chart Placeholder]</div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Category Stock Distribution</div>
+            <div class="category-bar">
+              <div class="bar produce" style="height:48px;">
+                <div class="bar-value">24%</div>
+                <div class="bar-label">Produce</div>
+              </div>
+              <div class="bar dairy" style="height:33px;">
+                <div class="bar-value">18%</div>
+                <div class="bar-label">Dairy</div>
+              </div>
+              <div class="bar bakery" style="height:24px;">
+                <div class="bar-value">13%</div>
+                <div class="bar-label">Bakery</div>
+              </div>
+              <div class="bar meat" style="height:18px;">
+                <div class="bar-value">16%</div>
+                <div class="bar-label">Meat</div>
+              </div>
+              <div class="bar pantry" style="height:9px;">
+                <div class="bar-value">8%</div>
+                <div class="bar-label">Pantry</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer style="text-align:center;color:#b7bbcd;font-size:.96rem;"><strong>GroceryHub</strong></footer>
+    </section>
+  </div>
+  <script>
+  // Sidebar highlighting logic for demo
+  document.querySelectorAll('.sidebar nav a').forEach(link => {
+    link.addEventListener('click', function(e){
+      document.querySelectorAll('.sidebar nav a').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      // Remove or comment out the next line to allow normal navigation
+      // e.preventDefault();
+    });
+  });
+</script>
+
+</body>
+</html>

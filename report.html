@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reports & Analytics - GroceryHub</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f3e8ff;
+      color: #182048;
+    }
+    .main-layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      background: #ede6fa;
+      min-width: 220px;
+      padding: 36px 0 0 0;
+      box-shadow: 2px 0 12px rgba(135,101,255,0.07);
+      display: flex; flex-direction: column;
+    }
+    .sidebar h2 {
+      color: #6c47ff;
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 34px;
+      letter-spacing: 1px;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 16px;
+    }
+    .sidebar nav a {
+      color: #5731ac;
+      background: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: background 0.21s, color 0.21s;
+      margin-right:12px;
+    }
+    .sidebar nav a.active, .sidebar nav a:hover {
+      background: #a7bdfc;
+      color: #222;
+    }
+    .analytics-content { flex:1;padding:36px 44px 36px 44px;}
+    .title-row {
+      display: flex;justify-content:space-between;align-items:center;
+      margin-bottom:20px;gap:8px;flex-wrap:wrap;
+    }
+    .title-main {
+      color:#28344e;font-size:1.33rem;font-weight:700;
+      letter-spacing:.1px;
+    }
+    .metrics-row {
+      display: flex;
+      gap: 22px;
+      margin-bottom: 22px;
+      flex-wrap:wrap;
+    }
+    .metric-card {
+      background: #fff;
+      border-radius: 13px;
+      box-shadow: 0 1px 10px rgba(117,87,250,0.07);
+      padding: 22px 30px;
+      min-width:165px;
+      min-height:70px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 1.07rem;
+      font-weight: 700;
+      color: #2a357c;
+    }
+    .metric-label {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #767aa0;
+      margin-bottom:3px;
+    }
+    .metric-sub {color:#20b39e;font-size:.93rem;font-weight:600;}
+    .metric-card.topcat{color:#ffb700;}
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 15px;
+      flex-wrap:wrap;
+    }
+    .filter-row input[type="date"] {
+      border: 1.3px solid #d4c6f4;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size:1rem;
+      color:#293070;background:#fff;
+    }
+    .filter-btn {
+      padding: 9px 18px;
+      background: #6748e6;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-left:3px;
+    }
+    .export-btn {
+      padding: 8px 18px;
+      background: #2d72bb;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left:10px;
+      transition: background 0.2s;
+    }
+    .export-btn:hover{background:#215496;}
+    .charts-row {
+      display: flex;
+      gap: 22px;
+      margin-bottom: 30px;
+      flex-wrap:wrap;
+    }
+    .chart-card {
+      background: #fff;
+      border-radius: 13px;
+      box-shadow: 0 2px 18px rgba(120,104,255,0.07);
+      padding: 19px 20px;
+      flex:1 1 320px;
+      min-width:320px;
+      min-height:220px;
+      display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;
+    }
+    .chart-title { font-weight:700;color:#253084;font-size:1.08rem; }
+    .chart-placeholder {
+      width:100%;min-height:145px;background:
+      linear-gradient(90deg,#e8effd 25%,#f6eee6 100%);
+      border-radius:8px;display:flex;align-items:center;justify-content:center;color:#b5b3e6;font-size:1.17rem;
+    }
+    .reports-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 17px rgba(120,104,255,0.09);
+      padding: 16px 21px;
+      margin-bottom: 20px;
+    }
+    .reports-title {
+      color:#253084;font-weight:700;font-size:1.09rem;margin-bottom:6px;
+    }
+    .reports-table {
+      width:100%;
+      border-collapse:collapse;
+      font-size:.98rem;
+      margin-top:6px;
+    }
+    .reports-table th, .reports-table td {
+      padding: 9px 6px;
+      text-align:left;
+      border-bottom:1px solid #f0f0f4;
+    }
+    .reports-table th { color:#9658e7;font-size:.99rem;}
+    .repo-status{
+      background:#e2f4ea;padding:3px 12px;border-radius:8px;font-size:.95rem;color:#148552;font-weight:600; 
+      border:none;
+    }
+    .repo-status.failed{background:#ffe7e2;color:#b6322b;}
+    .repo-status.processing{background:#fff8cc;color:#cabd3a;}
+    .repo-action a { color:#2776cf;text-decoration:underline;font-weight:600; }
+    @media (max-width:1000px){
+      .analytics-content{padding:14px 3vw;}
+      .charts-row{flex-direction:column;}
+      .metrics-row{gap:8px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>GroceryHub</h2>
+      <nav>
+         
+        <a href="scan.html">Scan/Add item</a>
+        <a href="expiry.html">Expiry Alert</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="shelf.html">Shelf Finder</a>
+        <a class="active" href="report.html">Reports & Analytics</a>
+        <a href="profile.html">Profile & Settings</a>
+      </nav>
+      <div style="margin-top:auto;font-size:.96rem;margin-bottom:22px;color:#b7bbcd;text-align:center;">
+        <span>Jane Doe<br/>Store Manager</span>
+      </div>
+    </aside>
+    <section class="analytics-content">
+      <div class="title-row">
+        <span class="title-main">Reports & Analytics</span>
+      </div>
+      <div class="metrics-row">
+        <div class="metric-card">
+          <span class="metric-label">Total Sales</span>
+          $124,567
+          <div class="metric-sub">+12% from last month</div>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Items Sold</span>
+          14,235
+          <div class="metric-sub">+8% from last month</div>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Avg. Transaction</span>
+          $35.20
+          <div class="metric-sub">+3% from last month</div>
+        </div>
+        <div class="metric-card topcat">
+          <span class="metric-label">Top Category</span>
+          Produce
+          <div class="metric-sub">45% of sales</div>
+        </div>
+      </div>
+      <form class="filter-row" onsubmit="return false;">
+        <input type="date">
+        <button class="filter-btn">Apply Filters</button>
+        <button class="export-btn">Export Data</button>
+      </form>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Sales Performance Over Time</div>
+          <div class="chart-placeholder">[Line Chart Placeholder]</div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Sales by Category</div>
+          <div class="chart-placeholder">[Pie Chart Placeholder]</div>
+        </div>
+      </div>
+      <div class="reports-card">
+        <div class="reports-title">Recent Reports</div>
+        <table class="reports-table">
+          <thead>
+            <tr>
+              <th>Report ID</th>
+              <th>Report Name</th>
+              <th>Date Generated</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>RPT001</td><td>Monthly Sales Summary</td><td>2024-07-28</td>
+              <td><span class="repo-status">Completed</span></td>
+              <td class="repo-action"><a href="#">View Report &rarr;</a></td>
+            </tr>
+            <tr>
+              <td>RPT002</td><td>Weekly Expiry Overview</td><td>2024-07-27</td>
+              <td><span class="repo-status">Completed</span></td>
+              <td class="repo-action"><a href="#">Download PDF</a></td>
+            </tr>
+            <tr>
+              <td>RPT003</td><td>Daily Transaction Log</td><td>2024-07-26</td>
+              <td><span class="repo-status processing">Processing</span></td>
+              <td class="repo-action"><a href="#">Check Status</a></td>
+            </tr>
+            <tr>
+              <td>RPT004</td><td>Category Performance Q2</td><td>2024-07-25</td>
+              <td><span class="repo-status">Completed</span></td>
+              <td class="repo-action"><a href="#">Share Link</a></td>
+            </tr>
+            <tr>
+              <td>RPT005</td><td>Employee Productivity</td><td>2024-07-24</td>
+              <td><span class="repo-status failed">Failed</span></td>
+              <td class="repo-action"><a href="#">Retry</a></td>
+            </tr>
+            <tr>
+              <td>RPT006</td><td>Inventory Movement Last Week</td><td>2024-07-23</td>
+              <td><span class="repo-status">Completed</span></td>
+              <td class="repo-action"><a href="#">View Report &rarr;</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

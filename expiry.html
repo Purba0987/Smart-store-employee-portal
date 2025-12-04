@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Expiry Alert Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f7fc;
+      color: #1b2859;
+    }
+    .main-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: #ede6fa;
+      min-width: 220px;
+      padding: 34px 0 0 0;
+      box-shadow: 2px 0 12px rgba(135,101,255,0.07);
+    }
+    .sidebar h2 {
+      color: #6c47ff;
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 34px;
+      letter-spacing: 1px;
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-left: 18px;
+    }
+    .sidebar nav a {
+      color: #5731ac;
+      background: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: background 0.21s, color 0.21s;
+    }
+    .sidebar nav a.active, .sidebar nav a:hover {
+      background: #d3c6f6;
+      color: #222;
+    }
+    .expiry-content {
+      flex: 1;
+      padding: 42px 58px 32px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .expiry-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #3742a6;
+      letter-spacing: 0.5px;
+    }
+    .notif-settings {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.98rem;
+    }
+    .notif-settings select, .notif-settings input[type="checkbox"] {
+      margin-left: 6px;
+      font-size: 1rem;
+      border-radius: 3px;
+      border: 1px solid #d4d4f3;
+      padding: 2px 7px;
+    }
+    .tab-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .tab-btn {
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 11px 24px;
+      background: #e3dde7;
+      color: #5b4fc4;
+      border: none;
+      border-radius: 12px 12px 0 0;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .tab-btn.active {
+      background: linear-gradient(90deg, #b0adeb 22%, #ece9fa 100%);
+      color: #222;
+      box-shadow: 0 2px 9px #dfdce9;
+    }
+    /* Table Styling */
+    .expiry-table-wrap {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 24px rgba(36,60,125,0.05);
+      padding: 24px 32px;
+      margin-bottom: 18px;
+      overflow-x:auto;
+    }
+    .expiry-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.98rem;
+    }
+    .expiry-table th, .expiry-table td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .expiry-table thead th {
+      color: #8e63e7;
+      font-weight: 700;
+      font-size: 1rem;
+      background: #f3f1fa;
+    }
+    .expiry-table tbody tr {
+      transition: background 0.13s;
+    }
+    .expiry-table tbody tr.critical { background: #ffe6e2; }
+    .expiry-table tbody tr.soon { background: #fff7c9; }
+    .expiry-table tbody tr.lowrisk { background: #eaf9ea; }
+    .expiry-table tbody tr:hover { background: #eaeaff; }
+    .risk-tag {
+      padding: 4px 11px;
+      border-radius: 11px;
+      font-weight:600;
+      font-size: 13px;
+      display:inline-block;
+      color:#fff;
+    }
+    .risk-tag.critical { background: #fa485a; }
+    .risk-tag.soon { background: #fda940; }
+    .risk-tag.lowrisk { background: #24c288; }
+    /* Shelf Location and Bulk Actions */
+    .shelf-loc { font-weight: 500; color: #1d6acf; font-size: 14px;}
+    .bulk-row {
+      display: flex;
+      gap: 18px;
+      margin: 8px 0 16px 0;
+      flex-wrap: wrap;
+    }
+    .bulk-btn {
+      background: #8fc7ff;
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      border-radius: 9px;
+      padding: 9px 18px;
+      font-size: 1rem;
+      margin-top: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(140,140,255,0.09);
+      transition: background 0.18s;
+    }
+    .bulk-btn:hover { background: #56aff8; }
+    /* Analytics Chart Placeholder */
+    .analytics-section {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 22px rgba(36,60,125,0.07);
+      padding: 20px 32px;
+      margin-bottom:19px;
+    }
+    .analytics-header { color:#3742a6; font-weight:700; font-size:1.15rem;}
+    .analytics-chart {
+      height: 120px;
+      background: linear-gradient(90deg, #efe8ff 60%, #e5e6ff 100%);
+      border-radius: 8px;
+      margin: 12px 0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#8e63e7;
+      font-size:1.45rem;
+      font-weight:500;
+      letter-spacing:1px;
+    }
+    /* Expiry Log History */
+    .log-section {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 16px rgba(36,60,125,0.07);
+      padding: 19px 32px;
+    }
+    .log-header { font-weight:700; color:#3742a6; margin-bottom:9px; }
+    .log-table {
+      width:100%;
+      border-collapse:collapse;
+      font-size:0.96rem;
+    }
+    .log-table th, .log-table td {
+      padding:9px 6px;
+      border-bottom:1px solid #ececec;
+      text-align:left;
+    }
+    .log-table th { color:#8e63e7; background:#f3f1fa;}
+    .action-link {
+      color:#3481e6;
+      text-decoration:underline;
+      cursor:pointer;
+      font-weight:500;
+    }
+    /* Responsive */
+    @media (max-width:1100px) {
+      .main-layout { flex-direction:column; align-items:stretch;}
+      .expiry-content { padding:18px 0 18px 0;}
+      .expiry-table-wrap, .analytics-section, .log-section { padding:16px 8vw;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Inventory Manager</h2>
+      <nav>
+       
+        <a  href="scan.html">Scan/Add item</a>
+        <a class="active" href="expiry.html">Expiry Alert</a>
+        <a  href="dashboard.html">Dashboard</a>
+        <a  href="shelf.html">Shelf Finder</a>
+        <a  href="report.html">Reports & Analytics</a>
+        <a  href="profile.html">Profile & Settings</a>
+        
+      </nav>
+    </aside>
+    <!-- Expiry Alert Main Content -->
+    <section class="expiry-content">
+      <!-- Expiry Alerts Header & Notification Preferences -->
+      <div class="header-row">
+        <span class="expiry-title">Expiry Alerts & Actions</span>
+        <div class="notif-settings">
+          <span>Alert Channel:
+            <select>
+              <option>Email</option>
+              <option>SMS</option>
+              <option>In-App Popup</option>
+            </select>
+          </span>
+          <label>
+            <input type="checkbox" checked />
+            Daily Summary
+          </label>
+          <label>
+            <input type="checkbox" checked />
+            Urgent Alerts
+          </label>
+        </div>
+      </div>
+      <!-- Tabs for Monthly/Weekly Expiry -->
+      <div class="tab-row">
+        <button class="tab-btn active">Weekly</button>
+        <button class="tab-btn">Monthly</button>
+      </div>
+      <!-- Bulk Actions -->
+      <div class="bulk-row">
+       <!---- <button class="bulk-btn">Clear All Expired</button>-->
+        <button class="bulk-btn">Schedule Removal</button>
+        <button class="bulk-btn">Auto Discount Expiring Items</button>
+        <!--<button class="bulk-btn">Promote At-Risk Products</button>-->
+        <!--<button class="bulk-btn">Export Expiry List</button>-->
+        <button class="bulk-btn">Related Offers</button>
+      </div>
+      <!-- Expiry Table -->
+      <div class="expiry-table-wrap">
+        <table class="expiry-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Expiry Date</th>
+              <th>Shelf Location</th>
+              <th>Risk</th>
+              <th>Notify</th>
+              <th>Employee</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="critical">
+              <td>Cheddar Cheese Block</td>
+              <td>Dairy</td>
+              <td>2024-09-16</td>
+              <td class="shelf-loc">Aisle 4 / Upper</td>
+              <td><span class="risk-tag critical">Critical</span></td>
+              <td>Popup, Email</td>
+              <td>Jane Doe</td>
+              <td><span class="action-link">Remove</span> | <span class="action-link">Discount</span></td>
+            </tr>
+            <tr class="soon">
+              <td>Whole Wheat Bread</td>
+              <td>Bakery</td>
+              <td>2024-09-19</td>
+              <td class="shelf-loc">Aisle 2 / Mid</td>
+              <td><span class="risk-tag soon">Soon</span></td>
+              <td>Email</td>
+              <td>John Smith</td>
+              <td><span class="action-link">Promote</span> | <span class="action-link">Remove</span></td>
+            </tr>
+            <tr class="lowrisk">
+              <td>Organic Gala Apples</td>
+              <td>Produce</td>
+              <td>2024-09-30</td>
+              <td class="shelf-loc">Aisle 1 / Lower</td>
+              <td><span class="risk-tag lowrisk">Low Risk</span></td>
+              <td>Summary</td>
+              <td>Sarah Lee</td>
+              <td><span class="action-link">Schedule Removal</span></td>
+            </tr>
+            <!-- Add more rows as needed -->
+          </tbody>
+        </table>
+      </div>
+      <!-- Analytics Section -->
+      <div class="analytics-section">
+        <div class="analytics-header">Expiry Trend Analytics</div>
+        <div class="analytics-chart">[Weekly/Monthly Expiry Trend Chart]</div>
+      </div>
+      <!-- Expiry Log History -->
+      <div class="log-section">
+        <div class="log-header">Recent Expiry Log</div>
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Employee</th>
+              <th>Action</th>
+              <th>Location</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2024-09-16</td>
+              <td>Cheddar Cheese Block</td>
+              <td>CHE010</td>
+              <td>Jane Doe</td>
+              <td>Removed</td>
+              <td>Aisle 4 / Upper</td>
+            </tr>
+            <tr>
+              <td>2024-09-13</td>
+              <td>Ground Beef 1lb</td>
+              <td>BEE003</td>
+              <td>John Smith</td>
+              <td>Discounted</td>
+              <td>Aisle 7 / Mid</td>
+            </tr>
+            <!-- Add more log entries -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

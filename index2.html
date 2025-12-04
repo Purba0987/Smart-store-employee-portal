@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Login - SmartStore</title>
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: #f3e8ff;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+    .full-center {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-outer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: -30px;
+      z-index: 2;
+      position: relative;
+    }
+    .logo-outer img {
+      width: 56px;
+      height: 56px;
+      background: #ece3fa;
+      border-radius: 50%;
+      padding: 10px;
+      box-shadow: 0 4px 16px #b09ef533;
+      display: block;
+    }
+    .logo-outer .logo-title {
+      margin-top: 8px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #774ce5;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .login-card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 30px rgba(122,102,208,0.13);
+      width: 370px;
+      max-width: 95vw;
+      padding: 42px 32px 32px 32px;
+      margin-top: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-items: stretch;
+    }
+    .tab-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+    .tab-btn {
+      background: #f3e8ff;
+      border: none;
+      color: #6748e6;
+      font-weight: 600;
+      font-size: 1.03rem;
+      padding: 8px 36px;
+      border-radius: 14px 14px 2px 2px;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-bottom: -2px;
+    }
+    .tab-btn.active {
+      background: #d9cdfb;
+      color: #28344e;
+      box-shadow: 0 2px 9px #e5d3fd;
+    }
+    .form-block {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeIn .4s;
+    }
+    .form-block.active { display: flex; }
+    @keyframes fadeIn { 0%{opacity:0;transform:translateY(24px);} 100%{opacity:1;transform:translateY(0);}}
+    label { font-size:1rem; color:#6e55ab; font-weight:600; margin-bottom:2px;}
+    input, select {
+      padding: 12px;
+      font-size: 1rem;
+      border: 1.1px solid #cdc7f6;
+      border-radius: 7px;
+      background: #f8f6fd;
+      outline: none;
+      margin-bottom: 6px;
+    }
+    input:focus, select:focus { border-color: #8265e5;}
+    button[type="submit"], .login-link-btn {
+      padding: 12px 0;
+      background: linear-gradient(90deg, #6748e6 60%, #8dd0fc 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1.12rem;
+      margin-top: 2px;
+      cursor: pointer;
+      transition: background 0.17s;
+      text-shadow: 0 1px 2px #9fa5c1;
+    }
+    button[type="submit"]:hover, .login-link-btn:hover {
+      background: linear-gradient(90deg,#22246a,#1f1c2c);
+      color: #efe25d;
+    }
+    .link-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.97rem;
+      margin-top: -3px;
+      gap: 8px;
+    }
+    .link-btn {
+      background: none;
+      border: none;
+      color: #6748e6;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: color 0.14s;
+    }
+    .link-btn:hover { color: #381a6a; }
+    .msg { color: #307f6e; margin-right: 7px; font-weight: 600; }
+    @media (max-width: 500px) {
+      .login-card { padding: 16px 5vw; min-width:unset; }
+      .tab-row{gap:6px;}
+      .logo-outer img { width:38px;height:38px;}
+      .logo-outer .logo-title { font-size:1.11rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="full-center">
+    <!-- Logo sits OUTSIDE the card, always centered -->
+    <div class="logo-outer">
+      <img src="https://img.icons8.com/ios-filled/64/6748e6/shop.png" alt="logo" />
+      <div class="logo-title">SmartStore</div>
+    </div>
+    <div class="login-card">
+      <div class="tab-row">
+        <button class="tab-btn active" id="tab-login" onclick="showTab('login')">Login</button>
+        <button class="tab-btn" id="tab-signup" onclick="showTab('signup')">Sign Up</button>
+      </div>
+      <!-- Login Form -->
+      <div class="form-block active" id="form-login">
+        <form id="loginForm">
+          <label for="loginEmail">Employee ID or Email</label>
+          <input type="text" id="loginEmail" required autocomplete="username">
+          <label for="loginPwd">Password</label>
+          <input type="password" id="loginPwd" required autocomplete="current-password">
+          <button type="submit">Login</button>
+        </form>
+        <div class="link-row">
+          <span id="loginMsg" class="msg"></span>
+          <button class="link-btn" onclick="showTab('forgot')">Forgot Password?</button>
+        </div>
+      </div>
+      <!-- Signup Form -->
+      <div class="form-block" id="form-signup">
+        <form id="signupForm">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" required>
+          <label for="signupEmail">Work Email</label>
+          <input type="email" id="signupEmail" required autocomplete="username">
+          <label for="signupPwd">Create Password</label>
+          <input type="password" id="signupPwd" required autocomplete="new-password">
+          <label for="signupPwdConfirm">Confirm Password</label>
+          <input type="password" id="signupPwdConfirm" required>
+          <label><input type="checkbox" id="signupTc" required> Accept Terms & Conditions</label>
+          <button type="submit">Create Account</button>
+        </form>
+        <div class="link-row">
+          <span id="signupMsg" class="msg"></span>
+          <button class="link-btn" onclick="showTab('login')">Back to Login</button>
+        </div>
+      </div>
+      <!-- Forgot/Reset Form -->
+      <div class="form-block" id="form-forgot">
+        <form id="forgotForm">
+          <label for="forgotEmail">Enter Email</label>
+          <input type="email" id="forgotEmail" required autocomplete="username">
+          <button type="submit">Send Reset Link</button>
+        </form>
+        <div class="link-row">
+          <span id="forgotMsg" class="msg"></span>
+          <button class="link-btn" onclick="showTab('login')">Back to Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function showTab(tab) {
+      ['login', 'signup', 'forgot'].forEach(t => {
+        document.getElementById('tab-' + t)?.classList.remove('active');
+        document.getElementById('form-' + t).classList.remove('active');
+      });
+      if (tab === 'forgot') document.getElementById('form-forgot').classList.add('active');
+      else {
+        document.getElementById('tab-' + tab)?.classList.add('active');
+        document.getElementById('form-' + tab).classList.add('active');
+      }
+      ['loginMsg', 'signupMsg', 'forgotMsg'].forEach(id => document.getElementById(id).textContent = '');
+    }
+
+    // --- Backend Integration ---
+    const API_ROOT = "http://127.0.0.1:3000/api/user";
+    // Login
+    document.getElementById("loginForm").onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPwd").value;
+      document.getElementById("loginMsg").textContent = "";
+      try {
+        const res = await fetch(`${API_ROOT}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if(data.status === "success") {
+          localStorage.setItem('token', data.token);
+          window.location.href = "scan.html";
+        } else {
+          document.getElementById("loginMsg").textContent = data.message || "Login failed";
+        }
+      } catch(err) {
+        document.getElementById("loginMsg").textContent = "Server error. Try again.";
+      }
+    };
+    // Signup
+    document.getElementById("signupForm").onsubmit = async function(e) {
+      e.preventDefault();
+      const name = document.getElementById("signupName").value;
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPwd").value;
+      const password_confirmation = document.getElementById("signupPwdConfirm").value;
+      const tc = document.getElementById("signupTc").checked;
+      document.getElementById("signupMsg").textContent = "";
+      try {
+        const res = await fetch(`${API_ROOT}/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, password_confirmation, tc })
+        });
+        const data = await res.json();
+        if(data.status === "success") {
+          document.getElementById("signupMsg").textContent = "Account created! You can login now.";
+          showTab('login');
+        } else {
+          document.getElementById("signupMsg").textContent = data.message || "Signup failed";
+        }
+      } catch(err) {
+        document.getElementById("signupMsg").textContent = "Server error. Try again.";
+      }
+    };
+    // Forgot Password
+    document.getElementById("forgotForm").onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById("forgotEmail").value;
+      document.getElementById("forgotMsg").textContent = "";
+      try {
+        const res = await fetch(`${API_ROOT}/send-reset-password-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        if(data.status === "success") {
+          document.getElementById("forgotMsg").textContent = "Reset Link Sent! Please check your email (MailTrap).";
+        } else {
+          document.getElementById("forgotMsg").textContent = data.message || "Reset failed";
+        }
+      } catch(err) {
+        document.getElementById("forgotMsg").textContent = "Server error. Try again.";
+      }
+    };
+  </script>
+</body>
+</html>
